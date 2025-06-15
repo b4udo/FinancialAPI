@@ -4,23 +4,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial API Demo</title>
+    <title>Financial API Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Elenco Conti</h1>
-<ul id="accounts"></ul>
+<header>
+    <h1>Financial API Dashboard</h1>
+</header>
 
-<script>
-    fetch('/api/accounts')
-      .then(res => res.json())
-      .then(data => {
-        const list = document.getElementById('accounts');
-        data.forEach(acc => {
-          const li = document.createElement('li');
-          li.textContent = `${acc.id}: ${acc.ownerName} – saldo €${acc.balance}`;
-          list.appendChild(li);
-        });
-      });
-  </script>
+<main>
+    <section class="card" id="accounts-section">
+        <h2>Conti</h2>
+        <form id="create-account-form" class="form-inline">
+            <input type="text" id="account-owner" placeholder="Nome Intestatario" required>
+            <input type="number" id="account-balance" placeholder="Saldo Iniziale (€)" step="0.01" min="0" required>
+            <button type="submit">Crea Conto</button>
+        </form>
+        <ul id="accounts" class="list"></ul>
+    </section>
+
+    <section class="card" id="transactions-section">
+        <h2>Transazioni</h2>
+        <form id="create-transaction-form" class="form-inline">
+            <input type="number" id="tx-account-id" placeholder="ID Conto" required>
+            <input type="number" id="tx-amount" placeholder="Importo (€)" step="0.01" min="0" required>
+            <input type="text" id="tx-desc" placeholder="Descrizione" required>
+            <button type="submit">Crea Transazione</button>
+        </form>
+        <table class="table">
+            <thead>
+            <tr><th>ID</th><th>Conto</th><th>Importo</th><th>Descrizione</th><th>Timestamp</th></tr>
+            </thead>
+            <tbody id="transactions-body"></tbody>
+        </table>
+    </section>
+</main>
+
+<script src="app.js"></script>
 </body>
 </html>

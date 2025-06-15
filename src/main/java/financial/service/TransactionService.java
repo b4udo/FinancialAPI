@@ -7,6 +7,7 @@ import financial.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +43,7 @@ public class TransactionService {
         Account account = accountRepository.findById(accId)
                 .orElseThrow(() -> new IllegalArgumentException("Account non trovato: " + accId));
 
-        double newBalance = account.getBalance() - transaction.getAmount();
+        BigDecimal newBalance = account.getBalance().subtract(transaction.getAmount());
         account.setBalance(newBalance);
         accountRepository.save(account);
 

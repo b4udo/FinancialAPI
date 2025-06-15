@@ -8,6 +8,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,7 +27,7 @@ class AccountServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        sample = Account.builder().id(1L).ownerName("Mario Rossi").balance(1000.0).build();
+        sample = Account.builder().id(1L).ownerName("Mario Rossi").balance(BigDecimal.valueOf(1000.0)).build();
     }
 
     @Test
@@ -47,7 +48,7 @@ class AccountServiceTest {
 
     @Test
     void createAccount_assignsIdAndSaves() {
-        var toCreate = Account.builder().ownerName("Luigi Verdi").balance(500.0).build();
+        var toCreate = Account.builder().ownerName("Luigi Verdi").balance(BigDecimal.valueOf(500.0)).build();
         when(repo.save(any(Account.class))).thenReturn(sample);
         var saved = service.createAccount(toCreate);
         assertEquals(sample.getId(), saved.getId());

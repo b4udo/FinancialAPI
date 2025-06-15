@@ -7,11 +7,14 @@ import financial.repository.TransactionRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 class TransactionServiceTest {
@@ -47,23 +50,28 @@ class TransactionServiceTest {
 
     @Test
     void testCreateTransaction() {
-        // prepara dati
+        // prepara dati con BigDecimal
         Transaction input = new Transaction();
         Account account = new Account();
         account.setId(1L);
-        account.setBalance(500.0);
+        account.setBalance(BigDecimal.valueOf(500.00));
         input.setAccount(account);
-        input.setAmount(100.0);
+        input.setAmount(BigDecimal.valueOf(100.00));
 
-        // stub repository
+        // stub repository per findById e save
         when(accountRepository.findById(1L)).thenReturn(Optional.of(account));
         Transaction saved = new Transaction();
         saved.setId(1L);
         when(transactionRepository.save(any(Transaction.class))).thenReturn(saved);
 
+        // esegui business logic
         Transaction result = transactionService.createTransaction(input);
+
         assertEquals(1L, result.getId());
-        verify(accountRepository).save(argThat(a -> a.getBalance() == 400.0));
+        // verifica che il balance sia stato aggiornato correttamente a 400.00
+        verify(accountRepository).save(argThat(a ->
+                a.getBalance().compareTo(BigDecimal.valueOf(400.00)) == 0
+        ));
     }
 
     @Test

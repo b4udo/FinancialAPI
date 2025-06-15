@@ -11,9 +11,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -41,8 +41,8 @@ class FinancialControllerTest {
     @Test
     void getAllAccounts_returnsJson() throws Exception {
         List<Account> accounts = Arrays.asList(
-                new Account(1L, "A", 100.0),
-                new Account(2L, "B", 200.0)
+                new Account(1L, "A", BigDecimal.valueOf(100.00)),
+                new Account(2L, "B", BigDecimal.valueOf(200.00))
         );
         when(accountService.getAllAccounts()).thenReturn(accounts);
 

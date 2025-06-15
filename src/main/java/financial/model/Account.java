@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 /**
  * Entity che rappresenta un conto finanziario
  */
@@ -25,5 +27,6 @@ public class Account {
     @Column(name = "name")
     private String ownerName;
 
-    private Double balance;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal balance;
 }
