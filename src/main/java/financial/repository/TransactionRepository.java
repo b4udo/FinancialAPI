@@ -1,15 +1,12 @@
 package financial.repository;
 
 import financial.model.Transaction;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
-/**
- * Repository JPA per operazioni CRUD su Transaction
- */
+/** Repository JPA per operazioni CRUD su Transaction */
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    List<Transaction> findByAccountId(Long accountId);
+  List<Transaction> findByAccountId(Long accountId);
 }
