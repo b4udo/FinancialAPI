@@ -1,0 +1,4 @@
+financial\service\TransactionServiceTest.class
+financial\service\AccountServiceTest.class
+financial\controller\FinancialControllerTest.class
+financial\controller\TransactionControllerTest.class

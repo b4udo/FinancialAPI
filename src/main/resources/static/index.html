@@ -1,0 +1,26 @@
+<!-- src/main/resources/static/index.html -->
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial API Demo</title>
+</head>
+<body>
+<h1>Elenco Conti</h1>
+<ul id="accounts"></ul>
+
+<script>
+    fetch('/api/accounts')
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('accounts');
+        data.forEach(acc => {
+          const li = document.createElement('li');
+          li.textContent = `${acc.id}: ${acc.ownerName} – saldo €${acc.balance}`;
+          list.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb               # Usa il DB H2 in memoria, chiamato "testdb"
+    driver-class-name: org.h2.Driver      # Driver H2
+    username: sa                          # Utente predefinito
+    password: ""                          # Password vuota (default)
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create                    # Hibernate crea/aggiorna le tabelle in base alle Entity
+  sql:
+    init:
+      mode: always
+  h2:
+    console:
+      enabled: true                       # Abilita la console web di H2
+      path: /h2-console                   # Raggiungibile su http://localhost:8080/h2-console
+  logging:
+    level:
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
