@@ -6,6 +6,7 @@ import financial.service.AccountService;
 import financial.service.TransactionService;
 import java.net.URI;
 import java.util.List;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,9 +24,12 @@ public class FinancialController {
   }
 
   // Health check
-  @GetMapping("/health")
+  @GetMapping(value = "/health", produces = MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8")
   public ResponseEntity<String> healthCheck() {
-    return ResponseEntity.ok("OK");
+    return ResponseEntity.ok()
+            .contentType(MediaType.TEXT_PLAIN)
+            .header("Content-Type", MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8")
+            .body("OK");
   }
 
   // Recupera tutti i conti
