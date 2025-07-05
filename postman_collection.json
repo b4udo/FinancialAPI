@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6",
+		"name": "Financial API Microservices",
+		"description": "Collection for Financial API Microservices",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/register",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "register"]
+						},
+						"description": "Registra un nuovo utente"
+					}
+				},
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"testuser\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "auth", "login"]
+						},
+						"description": "Login utente esistente"
+					}
+				}
+			]
+		},
+		{
+			"name": "Accounts",
+			"item": [
+				{
+					"name": "Get All Accounts",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/accounts",
+							"host": ["{{base_url}}"],
+							"path": ["api", "accounts"]
+						},
+						"description": "Recupera tutti i conti"
+					}
+				},
+				{
+					"name": "Get Account by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/accounts/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "accounts", "1"]
+						},
+						"description": "Recupera un conto specifico tramite ID"
+					}
+				},
+				{
+					"name": "Create Account",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"ownerName\": \"Test User\",\n    \"balance\": 1000.00,\n    \"accountType\": \"CHECKING\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/accounts",
+							"host": ["{{base_url}}"],
+							"path": ["api", "accounts"]
+						},
+						"description": "Crea un nuovo conto"
+					}
+				},
+				{
+					"name": "Delete Account",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/accounts/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "accounts", "1"]
+						},
+						"description": "Elimina un conto esistente"
+					}
+				},
+				{
+					"name": "Get Account Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/accounts/1/transactions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "accounts", "1", "transactions"]
+						},
+						"description": "Recupera tutte le transazioni di un conto specifico"
+					}
+				}
+			]
+		},
+		{
+			"name": "Transactions",
+			"item": [
+				{
+					"name": "Get All Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions"]
+						},
+						"description": "Recupera tutte le transazioni"
+					}
+				},
+				{
+					"name": "Get Transaction by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions", "1"]
+						},
+						"description": "Recupera una transazione specifica tramite ID"
+					}
+				},
+				{
+					"name": "Create Transaction",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"accountId\": 1,\n    \"amount\": 100.00,\n    \"description\": \"Test transaction\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/transactions",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions"]
+						},
+						"description": "Crea una nuova transazione"
+					}
+				},
+				{
+					"name": "Delete Transaction",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/transactions/1",
+							"host": ["{{base_url}}"],
+							"path": ["api", "transactions", "1"]
+						},
+						"description": "Elimina una transazione esistente"
+					}
+				}
+			]
+		},
+		{
+			"name": "Statistics",
+			"item": [
+				{
+					"name": "Get Monthly Statistics",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/statistics/monthly?startDate=2025-01-01T00:00:00&endDate=2025-12-31T23:59:59",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "statistics", "monthly"],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2025-01-01T00:00:00"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-12-31T23:59:59"
+								}
+							]
+						},
+						"description": "Ottiene le statistiche mensili delle transazioni per categoria"
+					}
+				},
+				{
+					"name": "Search Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/statistics/transactions/search?category=BILLS&minAmount=100&maxAmount=1000&startDate=2025-01-01T00:00:00&endDate=2025-12-31T23:59:59",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "statistics", "transactions", "search"],
+							"query": [
+								{
+									"key": "category",
+									"value": "BILLS"
+								},
+								{
+									"key": "minAmount",
+									"value": "100"
+								},
+								{
+									"key": "maxAmount",
+									"value": "1000"
+								},
+								{
+									"key": "startDate",
+									"value": "2025-01-01T00:00:00"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-12-31T23:59:59"
+								}
+							]
+						},
+						"description": "Ricerca avanzata delle transazioni con filtri"
+					}
+				},
+				{
+					"name": "Get Upcoming Recurring Transactions",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/statistics/recurring",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "statistics", "recurring"]
+						},
+						"description": "Ottiene le prossime transazioni ricorrenti programmate"
+					}
+				},
+				{
+					"name": "Get Annual Summary",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/statistics/summary/annual?year=2025",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "statistics", "summary", "annual"],
+							"query": [
+								{
+									"key": "year",
+									"value": "2025"
+								}
+							]
+						},
+						"description": "Ottiene il riepilogo annuale delle transazioni"
+					}
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080"
+		},
+		{
+			"key": "jwt_token",
+			"value": "your_jwt_token_here"
+		}
+	]
+}

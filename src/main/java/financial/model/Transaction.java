@@ -25,4 +25,30 @@ public class Transaction {
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "account_id")
   private Account account;
+
+  @Enumerated(EnumType.STRING)
+  private TransactionCategory category;
+
+  private boolean isRecurring;
+
+  @Column(name = "recurrence_period")
+  private String recurrencePeriod; // DAILY, WEEKLY, MONTHLY, YEARLY
+
+  @Column(name = "next_execution")
+  private LocalDateTime nextExecutionDate;
+
+  private boolean isImportant;
+
+  @Column(name = "notification_sent")
+  private boolean notificationSent;
+
+  @PrePersist
+  protected void onCreate() {
+      if (timestamp == null) {
+          timestamp = LocalDateTime.now();
+      }
+      if (amount.compareTo(new BigDecimal("1000")) > 0) {
+          isImportant = true;
+      }
+  }
 }
