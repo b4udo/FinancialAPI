@@ -19,3 +19,52 @@ spring:
     level:
       org.hibernate.SQL: DEBUG
       org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  redis:
+    host: localhost
+    port: 6379
+  resilience4j:
+    circuitbreaker:
+      instances:
+        default:
+          failureRateThreshold: 50
+          waitDurationInOpenState: 60s
+          slidingWindowSize: 5
+    retry:
+      instances:
+        default:
+          maxAttempts: 3
+          waitDuration: 2s
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus,info
+  endpoint:
+    health:
+      show-details: always
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  metrics:
+    tags:
+      application: ${spring.application.name}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+
+logging:
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} trace_id=%X{trace_id} span_id=%X{span_id} - %msg%n"
+  level:
+    root: INFO
+    financial: DEBUG
+    org.springframework.cache: DEBUG
+    org.springframework.data.redis: DEBUG
+
+spring.application.name: financial-api
+management.tracing:
+  sampling:
+    probability: 1.0
+  enabled: true
