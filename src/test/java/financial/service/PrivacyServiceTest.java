@@ -1,20 +1,19 @@
 package financial.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import financial.model.UserConsent;
 import financial.repository.UserConsentRepository;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.encrypt.TextEncryptor;
-
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class PrivacyServiceTest {
@@ -37,8 +36,7 @@ public class PrivacyServiceTest {
         String userAgent = "Mozilla/5.0";
 
         when(textEncryptor.encrypt(ipAddress)).thenReturn("encrypted_ip");
-        when(consentRepository.save(any(UserConsent.class)))
-            .thenAnswer(invocation -> invocation.getArgument(0));
+        when(consentRepository.save(any(UserConsent.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         // Act
         UserConsent result = privacyService.recordConsent(userId, consentType, true, ipAddress, userAgent);
@@ -58,8 +56,7 @@ public class PrivacyServiceTest {
         String userId = "testUser";
         String consentType = "DATA_PROCESSING";
 
-        when(consentRepository.existsByUserIdAndConsentTypeAndConsented(userId, consentType, true))
-            .thenReturn(true);
+        when(consentRepository.existsByUserIdAndConsentTypeAndConsented(userId, consentType, true)).thenReturn(true);
 
         // Act
         boolean result = privacyService.hasUserConsented(userId, consentType);
@@ -76,8 +73,7 @@ public class PrivacyServiceTest {
         UserConsent consent = new UserConsent();
         consent.setUserId(userId);
 
-        when(consentRepository.findByUserId(userId))
-            .thenReturn(Arrays.asList(consent));
+        when(consentRepository.findByUserId(userId)).thenReturn(Arrays.asList(consent));
 
         // Act
         List<UserConsent> results = privacyService.getUserConsents(userId);
@@ -126,8 +122,7 @@ public class PrivacyServiceTest {
         UserConsent consent = new UserConsent();
         consent.setUserId(userId);
 
-        when(consentRepository.findByUserId(userId))
-            .thenReturn(Arrays.asList(consent));
+        when(consentRepository.findByUserId(userId)).thenReturn(Arrays.asList(consent));
 
         // Act
         privacyService.deleteUserData(userId);

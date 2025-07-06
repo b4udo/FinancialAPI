@@ -11,44 +11,45 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Transaction {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
-  private LocalDateTime timestamp;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(precision = 10, scale = 2)
-  private BigDecimal amount;
+    private LocalDateTime timestamp;
 
-  private String description;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal amount;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "account_id")
-  private Account account;
+    private String description;
 
-  @Enumerated(EnumType.STRING)
-  private TransactionCategory category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id")
+    private Account account;
 
-  private boolean isRecurring;
+    @Enumerated(EnumType.STRING)
+    private TransactionCategory category;
 
-  @Column(name = "recurrence_period")
-  private String recurrencePeriod; // DAILY, WEEKLY, MONTHLY, YEARLY
+    private boolean isRecurring;
 
-  @Column(name = "next_execution")
-  private LocalDateTime nextExecutionDate;
+    @Column(name = "recurrence_period")
+    private String recurrencePeriod; // DAILY, WEEKLY, MONTHLY, YEARLY
 
-  private boolean isImportant;
+    @Column(name = "next_execution")
+    private LocalDateTime nextExecutionDate;
 
-  @Column(name = "notification_sent")
-  private boolean notificationSent;
+    private boolean isImportant;
 
-  @PrePersist
-  protected void onCreate() {
-    if (timestamp == null) {
-      timestamp = LocalDateTime.now();
+    @Column(name = "notification_sent")
+    private boolean notificationSent;
+
+    @PrePersist
+    protected void onCreate() {
+        if (timestamp == null) {
+            timestamp = LocalDateTime.now();
+        }
+        if (amount.compareTo(new BigDecimal("1000")) > 0) {
+            isImportant = true;
+        }
     }
-    if (amount.compareTo(new BigDecimal("1000")) > 0) {
-      isImportant = true;
-    }
-  }
 }

@@ -12,53 +12,54 @@ import lombok.NoArgsConstructor;
 /** Entity che rappresenta un conto finanziario */
 @Entity
 @Table(name = "financial_account")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
-  @Column(name = "name")
-  private String ownerName;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(precision = 10, scale = 2)
-  private BigDecimal balance;
+    @Column(name = "name")
+    private String ownerName;
 
-  @Column(nullable = false)
-  @Enumerated(EnumType.STRING)
-  private AccountType accountType;
+    @Column(precision = 10, scale = 2)
+    private BigDecimal balance;
 
-  @Column(length = 34)
-  private String iban;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountType accountType;
 
-  @Column(name = "withdrawal_limit")
-  private BigDecimal withdrawalLimit;
+    @Column(length = 34)
+    private String iban;
 
-  @Column(name = "interest_rate")
-  private BigDecimal interestRate;
+    @Column(name = "withdrawal_limit")
+    private BigDecimal withdrawalLimit;
 
-  @Column(name = "created_at")
-  private LocalDateTime createdAt;
+    @Column(name = "interest_rate")
+    private BigDecimal interestRate;
 
-  @Column(name = "last_updated")
-  private LocalDateTime lastUpdated;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
-  private User user;
+    @Column(name = "last_updated")
+    private LocalDateTime lastUpdated;
 
-  @PrePersist
-  protected void onCreate() {
-    createdAt = LocalDateTime.now();
-    lastUpdated = LocalDateTime.now();
-  }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
-  @PreUpdate
-  protected void onUpdate() {
-    lastUpdated = LocalDateTime.now();
-  }
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        lastUpdated = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        lastUpdated = LocalDateTime.now();
+    }
 }

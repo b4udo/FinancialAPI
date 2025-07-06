@@ -1,13 +1,14 @@
 package financial.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 @Entity
 @Data
 @Table(name = "user_consents")
 public class UserConsent {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

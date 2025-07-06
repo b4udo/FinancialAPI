@@ -2,15 +2,14 @@ package financial.service;
 
 import financial.model.UserConsent;
 import financial.repository.UserConsentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.encrypt.TextEncryptor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.encrypt.TextEncryptor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class PrivacyService {
@@ -22,8 +21,13 @@ public class PrivacyService {
     private TextEncryptor textEncryptor;
 
     @Transactional
-    public UserConsent recordConsent(String userId, String consentType, boolean consented,
-                                   String ipAddress, String userAgent) {
+    public UserConsent recordConsent(
+        String userId,
+        String consentType,
+        boolean consented,
+        String ipAddress,
+        String userAgent
+    ) {
         UserConsent consent = new UserConsent();
         consent.setUserId(userId);
         consent.setConsentType(consentType);
@@ -55,8 +59,7 @@ public class PrivacyService {
 
     public void deleteUserData(String userId) {
         // Implement GDPR right to be forgotten
-        consentRepository.findByUserId(userId)
-                        .forEach(consent -> consentRepository.delete(consent));
+        consentRepository.findByUserId(userId).forEach(consent -> consentRepository.delete(consent));
     }
 
     public Map<String, Object> exportUserData(String userId) {
@@ -67,5 +70,4 @@ public class PrivacyService {
         userData.put("consents", consents);
         return userData;
     }
-
 }

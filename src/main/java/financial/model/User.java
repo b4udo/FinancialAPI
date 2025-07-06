@@ -13,21 +13,22 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
 
-  @Column(unique = true, nullable = false)
-  private String username;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-  @Column(nullable = false)
-  private String password;
+    @Column(unique = true, nullable = false)
+    private String username;
 
-  @Column(nullable = false)
-  @Enumerated(EnumType.STRING)
-  private UserRole role;
+    @Column(nullable = false)
+    private String password;
 
-  private String email;
-  private String firstName;
-  private String lastName;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+    private String email;
+    private String firstName;
+    private String lastName;
 }

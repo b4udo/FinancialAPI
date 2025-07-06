@@ -1,5 +1,7 @@
 package financial.aspect;
 
+import java.time.LocalDateTime;
+import java.util.Arrays;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -9,12 +11,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.util.Arrays;
-
 @Aspect
 @Component
 public class AuditLogAspect {
+
     private static final Logger auditLogger = LoggerFactory.getLogger("AUDIT_LOG");
 
     @Around("@annotation(financial.aspect.AuditLog)")
@@ -27,21 +27,38 @@ public class AuditLogAspect {
         String className = joinPoint.getTarget().getClass().getSimpleName();
 
         // Log before method execution
-        auditLogger.info("AUDIT: User {} accessed {}.{} at {} with parameters: {}",
-            user, className, methodName, timestamp, Arrays.toString(joinPoint.getArgs()));
+        auditLogger.info(
+            "AUDIT: User {} accessed {}.{} at {} with parameters: {}",
+            user,
+            className,
+            methodName,
+            timestamp,
+            Arrays.toString(joinPoint.getArgs())
+        );
 
         try {
             Object result = joinPoint.proceed();
 
             // Log after successful execution
-            auditLogger.info("AUDIT: User {} successfully completed {}.{} at {}",
-                user, className, methodName, LocalDateTime.now());
+            auditLogger.info(
+                "AUDIT: User {} successfully completed {}.{} at {}",
+                user,
+                className,
+                methodName,
+                LocalDateTime.now()
+            );
 
             return result;
         } catch (Exception e) {
             // Log if operation fails
-            auditLogger.error("AUDIT: User {} failed executing {}.{} at {} with error: {}",
-                user, className, methodName, LocalDateTime.now(), e.getMessage());
+            auditLogger.error(
+                "AUDIT: User {} failed executing {}.{} at {} with error: {}",
+                user,
+                className,
+                methodName,
+                LocalDateTime.now(),
+                e.getMessage()
+            );
             throw e;
         }
     }
