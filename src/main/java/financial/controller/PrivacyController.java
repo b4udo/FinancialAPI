@@ -5,6 +5,7 @@ import financial.model.UserConsent;
 import financial.service.PrivacyService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,8 +56,9 @@ public class PrivacyController {
     @GetMapping("/export/{userId}")
     @AuditLog(operation = "EXPORT_USER_DATA")
     public ResponseEntity<Map<String, Object>> exportUserData(@PathVariable String userId) {
-        // Implementation for GDPR data portability right
-        // This would collect all user data in a portable format
-        return ResponseEntity.ok().build();
+        Map<String, Object> userData = privacyService.exportUserData(userId);
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(userData);
     }
 }

@@ -1,4 +1,4 @@
-a in italiano cosa hai fatto e a cosa servegpackage financial.repository;
+package financial.repository;
 
 import financial.model.UserConsent;
 import org.springframework.data.jpa.repository.JpaRepository;

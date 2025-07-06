@@ -1,4 +1,4 @@
- package financial.service;
+package financial.service;
 
 import financial.model.UserConsent;
 import financial.repository.UserConsentRepository;
@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +57,15 @@ public class PrivacyService {
         // Implement GDPR right to be forgotten
         consentRepository.findByUserId(userId)
                         .forEach(consent -> consentRepository.delete(consent));
-        // Add more data deletion logic for other user-related data
     }
+
+    public Map<String, Object> exportUserData(String userId) {
+        Map<String, Object> userData = new HashMap<>();
+
+        // Raccogliere tutti i consensi dell'utente
+        List<UserConsent> consents = consentRepository.findByUserId(userId);
+        userData.put("consents", consents);
+        return userData;
+    }
+
 }

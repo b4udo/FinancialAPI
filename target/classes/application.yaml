@@ -15,26 +15,25 @@ spring:
     console:
       enabled: true                       # Abilita la console web di H2
       path: /h2-console                   # Raggiungibile su http://localhost:8080/h2-console
-  logging:
-    level:
-      org.hibernate.SQL: DEBUG
-      org.hibernate.type.descriptor.sql.BasicBinder: TRACE
   redis:
     host: localhost
     port: 6379
-  resilience4j:
-    circuitbreaker:
-      instances:
-        default:
-          failureRateThreshold: 50
-          waitDurationInOpenState: 60s
-          slidingWindowSize: 5
-    retry:
-      instances:
-        default:
-          maxAttempts: 3
-          waitDuration: 2s
 
+# Configurazione Resilience4j
+resilience4j:
+  circuitbreaker:
+    instances:
+      default:
+        failureRateThreshold: 50
+        waitDurationInOpenState: 60s
+        slidingWindowSize: 5
+  retry:
+    instances:
+      default:
+        maxAttempts: 3
+        waitDuration: 2s
+
+# Configurazione Management e Metriche
 management:
   endpoints:
     web:
@@ -54,17 +53,29 @@ management:
       percentiles-histogram:
         http.server.requests: true
 
+# Configurazione Logging Unificata
 logging:
   pattern:
-    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} trace_id=%X{trace_id} span_id=%X{span_id} - %msg%n"
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
   level:
     root: INFO
     financial: DEBUG
     org.springframework.cache: DEBUG
     org.springframework.data.redis: DEBUG
+    AUDIT_LOG: INFO
+  file:
+    name: logs/audit.log
+    max-size: 10MB
+    max-history: 30
 
+# Configurazione Applicazione
 spring.application.name: financial-api
 management.tracing:
   sampling:
     probability: 1.0
   enabled: true
+
+# Configurazione Encryption
+encryption:
+  secret-key: ${ENCRYPTION_KEY:aes256encryptionkey32bytes1234}
+  salt: ${ENCRYPTION_SALT:5c0744940b5c369b}

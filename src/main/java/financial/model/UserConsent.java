@@ -1,4 +1,4 @@
-ga in italiano cosa hai fatttoepackage financial.model;
+package financial.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Table(name = "user_consents")
 public class UserConsent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,15 +27,20 @@ public class UserConsent {
     @Column(nullable = false)
     private LocalDateTime lastUpdated;
 
-    @Column
+    @Column(length = 512)
     private String ipAddress;
 
-    @Column
+    @Column(length = 1024)
     private String userAgent;
 
     @PrePersist
+    protected void onCreate() {
+        consentTimestamp = LocalDateTime.now();
+        lastUpdated = LocalDateTime.now();
+    }
+
     @PreUpdate
-    public void updateTimestamp() {
+    protected void onUpdate() {
         lastUpdated = LocalDateTime.now();
     }
 }
