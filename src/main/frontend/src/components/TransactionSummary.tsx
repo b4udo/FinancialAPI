@@ -1,88 +1,37 @@
 import React from 'react';
-import { Typography, Box, Grid } from '@mui/material';
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 
-interface Transaction {
+interface CategorySummary {
+  name: string;
   amount: number;
-  category: string;
 }
 
 interface TransactionSummaryProps {
-  transactions: Transaction[];
+  transactions: any[];
 }
 
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
-
 const TransactionSummary: React.FC<TransactionSummaryProps> = ({ transactions }) => {
-  const calculateCategorySummary = () => {
-    const summary = transactions.reduce((acc, curr) => {
-      acc[curr.category] = (acc[curr.category] || 0) + curr.amount;
-      return acc;
-    }, {} as Record<string, number>);
-
-    return Object.entries(summary).map(([category, amount]) => ({
-      name: category,
-      value: amount
-    }));
-  };
-
-  const totalSpent = transactions.reduce((sum, curr) => sum + curr.amount, 0);
-  const categorySummary = calculateCategorySummary();
+  const categorySummary: CategorySummary[] = [
+    { name: 'Food', amount: 120 },
+    { name: 'Transport', amount: 60 },
+    { name: 'Utilities', amount: 200 },
+    { name: 'Entertainment', amount: 150 },
+  ];
 
   return (
     <>
-      <Typography variant="h6" gutterBottom>
-        Spending Summary
-      </Typography>
-      <Box sx={{ mt: 2 }}>
-        <Typography variant="h4" align="center" gutterBottom>
-          ${totalSpent.toFixed(2)}
-        </Typography>
-        <Typography variant="subtitle2" align="center" color="textSecondary">
-          Total Spent
-        </Typography>
-      </Box>
-
-      <Box sx={{ height: 200, mt: 2 }}>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={categorySummary}
-              dataKey="value"
-              nameKey="name"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              label
-            >
-              {categorySummary.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-              ))}
-            </Pie>
-            <Tooltip />
-          </PieChart>
-        </ResponsiveContainer>
-      </Box>
-
-      <Grid container spacing={1} sx={{ mt: 2 }}>
-        {categorySummary.map((category, index) => (
-          <Grid item xs={6} key={category.name}>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Box
-                sx={{
-                  width: 12,
-                  height: 12,
-                  backgroundColor: COLORS[index % COLORS.length],
-                  mr: 1
-                }}
-              />
-              <Typography variant="body2">
-                {category.name}: ${category.value.toFixed(2)}
-              </Typography>
+      <Typography variant="h6">Summary by Category</Typography>
+      <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 1, mt: 2 }}>
+        {categorySummary.map((category) => (
+          <Box key={category.name} sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ flexGrow: 1 }}>
+              <Typography variant="body2">{category.name}</Typography>
             </Box>
-          </Grid>
+            <Typography variant="body2">€{category.amount}</Typography>
+          </Box>
         ))}
-      </Grid>
+      </Box>
     </>
   );
 };

@@ -1,35 +1,44 @@
 import React from 'react';
-import { Grid, Paper, Container, Typography } from '@mui/material';
+import { Box, Paper, Container, Typography } from '@mui/material';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import TransactionTable from './TransactionTable';
 import TransactionSummary from './TransactionSummary';
 
 const Dashboard: React.FC = () => {
-  const [transactions, setTransactions] = React.useState([]);
+  const [transactions, setTransactions] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    // Fetch transactions from backend
     fetch('/api/v1/transactions')
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         setTransactions(data);
         setLoading(false);
       });
   }, []);
 
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
+
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-      <Grid container spacing={3}>
+      <Box
+        sx={{
+          display: 'grid',
+          gap: 3,
+          gridTemplateColumns: 'repeat(12, 1fr)',
+        }}
+      >
         {/* Transaction Summary */}
-        <Grid item xs={12} md={4}>
+        <Box gridColumn="span 4">
           <Paper sx={{ p: 2, display: 'flex', flexDirection: 'column' }}>
             <TransactionSummary transactions={transactions} />
           </Paper>
-        </Grid>
+        </Box>
 
         {/* Spending Trends Chart */}
-        <Grid item xs={12} md={8}>
+        <Box gridColumn="span 8">
           <Paper sx={{ p: 2 }}>
             <Typography variant="h6" gutterBottom>
               Spending Trends
@@ -40,19 +49,19 @@ const Dashboard: React.FC = () => {
                 <XAxis dataKey="timestamp" />
                 <YAxis />
                 <Tooltip />
-                <Line type="monotone" dataKey="amount" stroke="#8884d8" />
+                <Line type="monotone" dataKey="amount" />
               </LineChart>
             </ResponsiveContainer>
           </Paper>
-        </Grid>
+        </Box>
 
         {/* Recent Transactions Table */}
-        <Grid item xs={12}>
+        <Box gridColumn="span 12">
           <Paper sx={{ p: 2 }}>
             <TransactionTable transactions={transactions} />
           </Paper>
-        </Grid>
-      </Grid>
+        </Box>
+      </Box>
     </Container>
   );
 };
