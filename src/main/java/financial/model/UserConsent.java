@@ -9,39 +9,39 @@ import lombok.Data;
 @Table(name = "user_consents")
 public class UserConsent {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(nullable = false)
-    private String userId;
+  @Column(nullable = false)
+  private String userId;
 
-    @Column(nullable = false)
-    private String consentType;
+  @Column(nullable = false)
+  private String consentType;
 
-    @Column(nullable = false)
-    private boolean consented;
+  @Column(nullable = false)
+  private boolean consented;
 
-    @Column(nullable = false)
-    private LocalDateTime consentTimestamp;
+  @Column(nullable = false)
+  private LocalDateTime consentTimestamp;
 
-    @Column(nullable = false)
-    private LocalDateTime lastUpdated;
+  @Column(nullable = false)
+  private LocalDateTime lastUpdated;
 
-    @Column(length = 512)
-    private String ipAddress;
+  @Column(length = 512)
+  private String ipAddress;
 
-    @Column(length = 1024)
-    private String userAgent;
+  @Column(length = 1024)
+  private String userAgent;
 
-    @PrePersist
-    protected void onCreate() {
-        consentTimestamp = LocalDateTime.now();
-        lastUpdated = LocalDateTime.now();
-    }
+  @PrePersist
+  protected void onCreate() {
+    consentTimestamp = LocalDateTime.now();
+    lastUpdated = LocalDateTime.now();
+  }
 
-    @PreUpdate
-    protected void onUpdate() {
-        lastUpdated = LocalDateTime.now();
-    }
+  @PreUpdate
+  protected void onUpdate() {
+    lastUpdated = LocalDateTime.now();
+  }
 }

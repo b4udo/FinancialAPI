@@ -25,166 +25,172 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class TransactionServiceTest {
 
-    @Mock
-    private TransactionRepository transactionRepository;
+  @Mock private TransactionRepository transactionRepository;
 
-    @Mock
-    private AccountRepository accountRepository;
+  @Mock private AccountRepository accountRepository;
 
-    @Mock
-    private NotificationService notificationService;
+  @Mock private NotificationService notificationService;
 
-    @InjectMocks
-    private TransactionService transactionService;
+  @InjectMocks private TransactionService transactionService;
 
-    private Transaction recurringTransaction;
-    private Transaction importantTransaction;
-    private Account account;
+  private Transaction recurringTransaction;
+  private Transaction importantTransaction;
+  private Account account;
 
-    @BeforeEach
-    void setUp() {
-        account =
-            Account
-                .builder()
-                .id(1L)
-                .ownerName("Test User")
-                .balance(new BigDecimal("1000.00"))
-                .accountType(AccountType.CHECKING)
-                .build();
+  @BeforeEach
+  void setUp() {
+    account =
+        Account.builder()
+            .id(1L)
+            .ownerName("Test User")
+            .balance(new BigDecimal("1000.00"))
+            .accountType(AccountType.CHECKING)
+            .build();
 
-        recurringTransaction =
-            Transaction
-                .builder()
-                .id(1L)
+    recurringTransaction =
+        Transaction.builder()
+            .id(1L)
+            .amount(new BigDecimal("100.00"))
+            .category(TransactionCategory.BILLS)
+            .description("Monthly Bill")
+            .timestamp(LocalDateTime.now())
+            .isRecurring(true)
+            .recurrencePeriod("MONTHLY")
+            .nextExecutionDate(LocalDateTime.now().plusMonths(1))
+            .account(account)
+            .build();
+
+    importantTransaction =
+        Transaction.builder()
+            .id(2L)
+            .amount(new BigDecimal("1500.00"))
+            .category(TransactionCategory.SALARY)
+            .description("Monthly Salary")
+            .timestamp(LocalDateTime.now())
+            .isRecurring(false)
+            .account(account)
+            .build();
+  }
+
+  @Test
+  void createTransaction_WithRecurring_ShouldNotifyAndSave() {
+    // Arrange
+    when(accountRepository.findById(any())).thenReturn(Optional.of(account));
+    when(transactionRepository.save(any())).thenReturn(recurringTransaction);
+
+    // Act
+    Transaction result = transactionService.createTransaction(recurringTransaction);
+
+    // Assert
+    assertNotNull(result);
+    verify(notificationService).notifyRecurringTransactionScheduled(any());
+    verify(transactionRepository).save(any());
+  }
+
+  @Test
+  void createTransaction_WithImportantAmount_ShouldNotifyAndSave() {
+    // Arrange
+    when(accountRepository.findById(any())).thenReturn(Optional.of(account));
+    when(transactionRepository.save(any())).thenReturn(importantTransaction);
+
+    // Act
+    Transaction result = transactionService.createTransaction(importantTransaction);
+
+    // Assert
+    assertNotNull(result);
+    verify(notificationService).notifyImportantTransaction(any());
+    verify(transactionRepository).save(any());
+  }
+
+  @Test
+  void getCategoryStatistics_ShouldReturnCorrectTotals() {
+    // Arrange
+    LocalDateTime start = LocalDateTime.now().minusMonths(1);
+    LocalDateTime end = LocalDateTime.now();
+
+    List<Transaction> transactions =
+        Arrays.asList(
+            Transaction.builder()
                 .amount(new BigDecimal("100.00"))
                 .category(TransactionCategory.BILLS)
-                .description("Monthly Bill")
-                .timestamp(LocalDateTime.now())
-                .isRecurring(true)
-                .recurrencePeriod("MONTHLY")
-                .nextExecutionDate(LocalDateTime.now().plusMonths(1))
-                .account(account)
-                .build();
+                .build(),
+            Transaction.builder()
+                .amount(new BigDecimal("200.00"))
+                .category(TransactionCategory.BILLS)
+                .build());
 
-        importantTransaction =
-            Transaction
-                .builder()
-                .id(2L)
-                .amount(new BigDecimal("1500.00"))
-                .category(TransactionCategory.SALARY)
-                .description("Monthly Salary")
-                .timestamp(LocalDateTime.now())
-                .isRecurring(false)
-                .account(account)
-                .build();
-    }
+    when(transactionRepository.findByTimestampBetween(start, end)).thenReturn(transactions);
 
-    @Test
-    void createTransaction_WithRecurring_ShouldNotifyAndSave() {
-        // Arrange
-        when(accountRepository.findById(any())).thenReturn(Optional.of(account));
-        when(transactionRepository.save(any())).thenReturn(recurringTransaction);
+    // Act
+    Map<TransactionCategory, BigDecimal> result =
+        transactionService.getCategoryStatistics(start, end);
 
-        // Act
-        Transaction result = transactionService.createTransaction(recurringTransaction);
+    // Assert
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertEquals(new BigDecimal("300.00"), result.get(TransactionCategory.BILLS));
+  }
 
-        // Assert
-        assertNotNull(result);
-        verify(notificationService).notifyRecurringTransactionScheduled(any());
-        verify(transactionRepository).save(any());
-    }
+  @Test
+  void getUpcomingRecurringTransactions_ShouldReturnOnlyFutureRecurring() {
+    // Arrange
+    List<Transaction> expectedTransactions = Arrays.asList(recurringTransaction);
+    when(transactionRepository.findByIsRecurringTrueAndNextExecutionDateAfter(any()))
+        .thenReturn(expectedTransactions);
 
-    @Test
-    void createTransaction_WithImportantAmount_ShouldNotifyAndSave() {
-        // Arrange
-        when(accountRepository.findById(any())).thenReturn(Optional.of(account));
-        when(transactionRepository.save(any())).thenReturn(importantTransaction);
+    // Act
+    List<Transaction> result = transactionService.getUpcomingRecurringTransactions();
 
-        // Act
-        Transaction result = transactionService.createTransaction(importantTransaction);
+    // Assert
+    assertNotNull(result);
+    assertEquals(1, result.size());
+    assertTrue(result.get(0).isRecurring());
+    assertEquals("MONTHLY", result.get(0).getRecurrencePeriod());
+  }
 
-        // Assert
-        assertNotNull(result);
-        verify(notificationService).notifyImportantTransaction(any());
-        verify(transactionRepository).save(any());
-    }
+  @Test
+  void processRecurringTransactions_ShouldCreateNewTransactionsAndUpdateDates() {
+    // Arrange
+    when(transactionRepository.findByIsRecurringTrueAndNextExecutionDateBefore(any()))
+        .thenReturn(Arrays.asList(recurringTransaction));
+    when(transactionRepository.save(any())).thenReturn(recurringTransaction);
 
-    @Test
-    void getCategoryStatistics_ShouldReturnCorrectTotals() {
-        // Arrange
-        LocalDateTime start = LocalDateTime.now().minusMonths(1);
-        LocalDateTime end = LocalDateTime.now();
+    // Act
+    transactionService.processRecurringTransactions();
 
-        List<Transaction> transactions = Arrays.asList(
-            Transaction.builder().amount(new BigDecimal("100.00")).category(TransactionCategory.BILLS).build(),
-            Transaction.builder().amount(new BigDecimal("200.00")).category(TransactionCategory.BILLS).build()
-        );
+    // Assert
+    verify(transactionRepository, times(2))
+        .save(any()); // Una volta per la nuova transazione, una per l'aggiornamento
+  }
 
-        when(transactionRepository.findByTimestampBetween(start, end)).thenReturn(transactions);
+  @Test
+  void getAnnualSummary_ShouldReturnCorrectSummary() {
+    // Arrange
+    List<Transaction> yearTransactions =
+        Arrays.asList(
+            Transaction.builder()
+                .amount(new BigDecimal("100.00"))
+                .category(TransactionCategory.BILLS)
+                .build(),
+            Transaction.builder()
+                .amount(new BigDecimal("200.00"))
+                .category(TransactionCategory.GROCERIES)
+                .build());
 
-        // Act
-        Map<TransactionCategory, BigDecimal> result = transactionService.getCategoryStatistics(start, end);
+    when(transactionRepository.findByTimestampBetween(any(), any())).thenReturn(yearTransactions);
 
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals(new BigDecimal("300.00"), result.get(TransactionCategory.BILLS));
-    }
+    // Act
+    Map<String, Object> result = transactionService.getAnnualSummary(2025);
 
-    @Test
-    void getUpcomingRecurringTransactions_ShouldReturnOnlyFutureRecurring() {
-        // Arrange
-        List<Transaction> expectedTransactions = Arrays.asList(recurringTransaction);
-        when(transactionRepository.findByIsRecurringTrueAndNextExecutionDateAfter(any()))
-            .thenReturn(expectedTransactions);
+    // Assert
+    assertNotNull(result);
+    assertEquals(3, result.size());
+    assertEquals(2, result.get("totalTransactions"));
+    assertEquals(new BigDecimal("300.00"), result.get("totalAmount"));
 
-        // Act
-        List<Transaction> result = transactionService.getUpcomingRecurringTransactions();
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        assertTrue(result.get(0).isRecurring());
-        assertEquals("MONTHLY", result.get(0).getRecurrencePeriod());
-    }
-
-    @Test
-    void processRecurringTransactions_ShouldCreateNewTransactionsAndUpdateDates() {
-        // Arrange
-        when(transactionRepository.findByIsRecurringTrueAndNextExecutionDateBefore(any()))
-            .thenReturn(Arrays.asList(recurringTransaction));
-        when(transactionRepository.save(any())).thenReturn(recurringTransaction);
-
-        // Act
-        transactionService.processRecurringTransactions();
-
-        // Assert
-        verify(transactionRepository, times(2)).save(any()); // Una volta per la nuova transazione, una per l'aggiornamento
-    }
-
-    @Test
-    void getAnnualSummary_ShouldReturnCorrectSummary() {
-        // Arrange
-        List<Transaction> yearTransactions = Arrays.asList(
-            Transaction.builder().amount(new BigDecimal("100.00")).category(TransactionCategory.BILLS).build(),
-            Transaction.builder().amount(new BigDecimal("200.00")).category(TransactionCategory.GROCERIES).build()
-        );
-
-        when(transactionRepository.findByTimestampBetween(any(), any())).thenReturn(yearTransactions);
-
-        // Act
-        Map<String, Object> result = transactionService.getAnnualSummary(2025);
-
-        // Assert
-        assertNotNull(result);
-        assertEquals(3, result.size());
-        assertEquals(2, result.get("totalTransactions"));
-        assertEquals(new BigDecimal("300.00"), result.get("totalAmount"));
-
-        @SuppressWarnings("unchecked")
-        Map<TransactionCategory, BigDecimal> categoryBreakdown = (Map<TransactionCategory, BigDecimal>) result.get(
-            "categoryBreakdown"
-        );
-        assertEquals(2, categoryBreakdown.size());
-    }
+    @SuppressWarnings("unchecked")
+    Map<TransactionCategory, BigDecimal> categoryBreakdown =
+        (Map<TransactionCategory, BigDecimal>) result.get("categoryBreakdown");
+    assertEquals(2, categoryBreakdown.size());
+  }
 }

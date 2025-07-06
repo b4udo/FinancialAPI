@@ -12,34 +12,34 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/transactions")
 public class TransactionController {
 
-    private final TransactionService transactionService;
+  private final TransactionService transactionService;
 
-    public TransactionController(TransactionService transactionService) {
-        this.transactionService = transactionService;
-    }
+  public TransactionController(TransactionService transactionService) {
+    this.transactionService = transactionService;
+  }
 
-    @GetMapping
-    public ResponseEntity<List<Transaction>> getAll() {
-        return ResponseEntity.ok(transactionService.getAllTransactions());
-    }
+  @GetMapping
+  public ResponseEntity<List<Transaction>> getAll() {
+    return ResponseEntity.ok(transactionService.getAllTransactions());
+  }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Transaction> getById(@PathVariable Long id) {
-        return transactionService
-            .getTransactionById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
-    }
+  @GetMapping("/{id}")
+  public ResponseEntity<Transaction> getById(@PathVariable Long id) {
+    return transactionService
+        .getTransactionById(id)
+        .map(ResponseEntity::ok)
+        .orElse(ResponseEntity.notFound().build());
+  }
 
-    @PostMapping
-    public ResponseEntity<Transaction> create(@RequestBody Transaction transaction) {
-        Transaction created = transactionService.createTransaction(transaction);
-        return ResponseEntity.created(URI.create("/api/transactions/" + created.getId())).body(created);
-    }
+  @PostMapping
+  public ResponseEntity<Transaction> create(@RequestBody Transaction transaction) {
+    Transaction created = transactionService.createTransaction(transaction);
+    return ResponseEntity.created(URI.create("/api/transactions/" + created.getId())).body(created);
+  }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        transactionService.deleteTransaction(id);
-        return ResponseEntity.noContent().build();
-    }
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Void> delete(@PathVariable Long id) {
+    transactionService.deleteTransaction(id);
+    return ResponseEntity.noContent().build();
+  }
 }

@@ -30,80 +30,72 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(FinancialController.class)
 @AutoConfigureMockMvc(addFilters = false) // ← bypassa i filtri di sicurezza
-@Import({ SecurityConfig.class, JacksonConfig.class })
+@Import({SecurityConfig.class, JacksonConfig.class})
 @ActiveProfiles("test")
 class FinancialControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired private MockMvc mockMvc;
 
-    @MockBean
-    private AccountService accountService;
+  @MockBean private AccountService accountService;
 
-    @MockBean
-    private TransactionService transactionService;
+  @MockBean private TransactionService transactionService;
 
-    @MockBean
-    private JwtService jwtService;
+  @MockBean private JwtService jwtService;
 
-    @MockBean
-    private JwtAuthenticationFilter jwtAuthFilter;
+  @MockBean private JwtAuthenticationFilter jwtAuthFilter;
 
-    @MockBean
-    private UserService userService;
+  @MockBean private UserService userService;
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void healthCheck_returnsOK() throws Exception {
-        mockMvc
-            .perform(get("/api/health"))
-            .andExpect(status().isOk())
-            .andExpect(content().string("OK"))
-            .andExpect(content().contentType("text/plain;charset=UTF-8")); // opzionale, ma più completo
-    }
+  @Test
+  @WithMockUser(roles = "USER")
+  void healthCheck_returnsOK() throws Exception {
+    mockMvc
+        .perform(get("/api/health"))
+        .andExpect(status().isOk())
+        .andExpect(content().string("OK"))
+        .andExpect(content().contentType("text/plain;charset=UTF-8")); // opzionale, ma più completo
+  }
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void getAllAccounts_returnsJson() throws Exception {
-        List<Account> accounts = Arrays.asList(
-            Account
-                .builder()
+  @Test
+  @WithMockUser(roles = "USER")
+  void getAllAccounts_returnsJson() throws Exception {
+    List<Account> accounts =
+        Arrays.asList(
+            Account.builder()
                 .id(1L)
                 .ownerName("A")
                 .balance(BigDecimal.valueOf(100.00))
                 .accountType(AccountType.CHECKING)
                 .build(),
-            Account
-                .builder()
+            Account.builder()
                 .id(2L)
                 .ownerName("B")
                 .balance(BigDecimal.valueOf(200.00))
                 .accountType(AccountType.SAVINGS)
-                .build()
-        );
-        when(accountService.getAllAccounts()).thenReturn(accounts);
+                .build());
+    when(accountService.getAllAccounts()).thenReturn(accounts);
 
-        mockMvc
-            .perform(get("/api/accounts").accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2))
-            .andExpect(jsonPath("$[0].id").value(1))
-            .andExpect(jsonPath("$[0].ownerName").value("A"))
-            .andExpect(jsonPath("$[1].id").value(2));
-    }
+    mockMvc
+        .perform(get("/api/accounts").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$[0].id").value(1))
+        .andExpect(jsonPath("$[0].ownerName").value("A"))
+        .andExpect(jsonPath("$[1].id").value(2));
+  }
 
-    @Test
-    @WithMockUser(roles = "USER")
-    void getAccountTransactions_returnsList() throws Exception {
-        Transaction tx1 = Transaction.builder().id(1L).amount(new BigDecimal("100.00")).build();
-        Transaction tx2 = Transaction.builder().id(2L).amount(new BigDecimal("200.00")).build();
-        List<Transaction> txs = Arrays.asList(tx1, tx2);
-        when(transactionService.getTransactionsByAccountId(1L)).thenReturn(txs);
+  @Test
+  @WithMockUser(roles = "USER")
+  void getAccountTransactions_returnsList() throws Exception {
+    Transaction tx1 = Transaction.builder().id(1L).amount(new BigDecimal("100.00")).build();
+    Transaction tx2 = Transaction.builder().id(2L).amount(new BigDecimal("200.00")).build();
+    List<Transaction> txs = Arrays.asList(tx1, tx2);
+    when(transactionService.getTransactionsByAccountId(1L)).thenReturn(txs);
 
-        mockMvc
-            .perform(get("/api/accounts/1/transactions").accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk())
-            .andExpect(jsonPath("$.length()").value(2))
-            .andExpect(jsonPath("$[0].id").value(1));
-    }
+    mockMvc
+        .perform(get("/api/accounts/1/transactions").accept(MediaType.APPLICATION_JSON))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.length()").value(2))
+        .andExpect(jsonPath("$[0].id").value(1));
+  }
 }

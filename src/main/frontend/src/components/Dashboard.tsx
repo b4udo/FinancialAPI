@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import TransactionTable from './TransactionTable';
 import TransactionSummary from './TransactionSummary';
@@ -14,29 +15,29 @@ const Dashboard: React.FC = () => {
   React.useEffect(() => {
     fetch('/api/v1/transactions')
       .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         return response.json();
       })
       .then((data) => {
         console.log('Fetched transactions:', data);
         setTransactions(data);
       })
-      .catch((error) => {
-        console.error('Error fetching transactions:', error);
-      })
-      .finally(() => {
-        setLoading(false);
-      });
+      .catch((error) => console.error('Error fetching transactions:', error))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return <Typography>Loading...</Typography>;
-  }
+  const handleAdd = () => {
+    console.log('Open add transaction form');
+    // implement form/dialog
+  };
+
+  if (loading) return <Typography>Loading...</Typography>;
 
   return (
     <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <Button variant="contained" onClick={handleAdd}>Add Transaction</Button>
+      </Box>
       <Box
         sx={{
           display: 'grid',

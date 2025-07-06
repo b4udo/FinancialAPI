@@ -12,44 +12,44 @@ import lombok.*;
 @AllArgsConstructor
 public class Transaction {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    private LocalDateTime timestamp;
+  private LocalDateTime timestamp;
 
-    @Column(precision = 10, scale = 2)
-    private BigDecimal amount;
+  @Column(precision = 10, scale = 2)
+  private BigDecimal amount;
 
-    private String description;
+  private String description;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "account_id")
-    private Account account;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "account_id")
+  private Account account;
 
-    @Enumerated(EnumType.STRING)
-    private TransactionCategory category;
+  @Enumerated(EnumType.STRING)
+  private TransactionCategory category;
 
-    private boolean isRecurring;
+  private boolean isRecurring;
 
-    @Column(name = "recurrence_period")
-    private String recurrencePeriod; // DAILY, WEEKLY, MONTHLY, YEARLY
+  @Column(name = "recurrence_period")
+  private String recurrencePeriod; // DAILY, WEEKLY, MONTHLY, YEARLY
 
-    @Column(name = "next_execution")
-    private LocalDateTime nextExecutionDate;
+  @Column(name = "next_execution")
+  private LocalDateTime nextExecutionDate;
 
-    private boolean isImportant;
+  private boolean isImportant;
 
-    @Column(name = "notification_sent")
-    private boolean notificationSent;
+  @Column(name = "notification_sent")
+  private boolean notificationSent;
 
-    @PrePersist
-    protected void onCreate() {
-        if (timestamp == null) {
-            timestamp = LocalDateTime.now();
-        }
-        if (amount.compareTo(new BigDecimal("1000")) > 0) {
-            isImportant = true;
-        }
+  @PrePersist
+  protected void onCreate() {
+    if (timestamp == null) {
+      timestamp = LocalDateTime.now();
     }
+    if (amount.compareTo(new BigDecimal("1000")) > 0) {
+      isImportant = true;
+    }
+  }
 }
