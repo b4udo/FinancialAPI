@@ -68,3 +68,18 @@ management.tracing:
   sampling:
     probability: 1.0
   enabled: true
+
+encryption:
+  secret-key: ${ENCRYPTION_KEY:your-secret-key-should-be-at-least-256-bits}
+  salt: ${ENCRYPTION_SALT:your-salt-value}
+
+# Configure audit logging
+logging:
+  level:
+    AUDIT_LOG: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/audit.log
+    max-size: 10MB
+    max-history: 30

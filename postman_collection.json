@@ -357,6 +357,53 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "Privacy",
+			"item": [
+				{
+					"name": "Record Consent",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": "{{baseUrl}}/api/v1/privacy/consent",
+						"body": {
+							"mode": "raw",
+							"raw": {
+								"userId": "user123",
+								"consentType": "DATA_PROCESSING",
+								"consented": true
+							}
+						}
+					}
+				},
+				{
+					"name": "Get User Consents",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/api/v1/privacy/consent/{{userId}}"
+					}
+				},
+				{
+					"name": "Delete User Data",
+					"request": {
+						"method": "DELETE",
+						"url": "{{baseUrl}}/api/v1/privacy/user/{{userId}}"
+					}
+				},
+				{
+					"name": "Export User Data",
+					"request": {
+						"method": "GET",
+						"url": "{{baseUrl}}/api/v1/privacy/export/{{userId}}"
+					}
+				}
+			]
 		}
 	],
 	"variable": [
