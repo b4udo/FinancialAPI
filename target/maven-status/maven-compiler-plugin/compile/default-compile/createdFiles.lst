@@ -1,9 +1,13 @@
 financial\security\SecurityConfig.class
 financial\service\NotificationService.class
 financial\service\UserService.class
+financial\config\RedisConfig.class
+financial\config\ResilienceConfig.class
+financial\config\JacksonConfig$1.class
 financial\controller\AuthController.class
 financial\model\Account$AccountBuilder.class
 financial\model\dto\AuthRequest.class
+financial\config\JacksonConfig.class
 financial\OpenAPIConfig.class
 financial\service\TransactionService.class
 financial\model\Transaction$TransactionBuilder.class
@@ -17,6 +21,7 @@ financial\FinancialApiApplication.class
 financial\model\User$UserBuilder.class
 financial\model\dto\AuthRequest$AuthRequestBuilder.class
 financial\repository\AccountRepository.class
+financial\aspect\PerformanceMonitoringAspect.class
 financial\model\User.class
 financial\security\JwtAuthenticationFilter.class
 financial\model\TransactionCategory.class
@@ -25,3 +30,4 @@ financial\service\AccountService.class
 financial\security\JwtService.class
 financial\repository\TransactionRepository.class
 financial\model\Transaction.class
+financial\config\MetricsConfig.class

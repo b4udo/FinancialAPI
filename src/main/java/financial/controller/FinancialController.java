@@ -27,9 +27,9 @@ public class FinancialController {
   @GetMapping(value = "/health", produces = MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8")
   public ResponseEntity<String> healthCheck() {
     return ResponseEntity.ok()
-            .contentType(MediaType.TEXT_PLAIN)
-            .header("Content-Type", MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8")
-            .body("OK");
+        .contentType(MediaType.TEXT_PLAIN)
+        .header("Content-Type", MediaType.TEXT_PLAIN_VALUE + ";charset=UTF-8")
+        .body("OK");
   }
 
   // Recupera tutti i conti

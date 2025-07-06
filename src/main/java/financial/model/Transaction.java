@@ -44,11 +44,11 @@ public class Transaction {
 
   @PrePersist
   protected void onCreate() {
-      if (timestamp == null) {
-          timestamp = LocalDateTime.now();
-      }
-      if (amount.compareTo(new BigDecimal("1000")) > 0) {
-          isImportant = true;
-      }
+    if (timestamp == null) {
+      timestamp = LocalDateTime.now();
+    }
+    if (amount.compareTo(new BigDecimal("1000")) > 0) {
+      isImportant = true;
+    }
   }
 }
