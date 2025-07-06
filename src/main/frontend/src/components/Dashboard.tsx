@@ -1,5 +1,8 @@
 import React from 'react';
-import { Box, Paper, Container, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import Paper from '@mui/material/Paper';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import TransactionTable from './TransactionTable';
 import TransactionSummary from './TransactionSummary';
@@ -10,9 +13,20 @@ const Dashboard: React.FC = () => {
 
   React.useEffect(() => {
     fetch('/api/v1/transactions')
-      .then((response) => response.json())
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
       .then((data) => {
+        console.log('Fetched transactions:', data);
         setTransactions(data);
+      })
+      .catch((error) => {
+        console.error('Error fetching transactions:', error);
+      })
+      .finally(() => {
         setLoading(false);
       });
   }, []);
