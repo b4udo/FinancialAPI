@@ -16,33 +16,31 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class PerformanceMonitoringAspect {
 
-  private final MeterRegistry meterRegistry;
+    private final MeterRegistry meterRegistry;
 
-  @Around(
-      "@annotation(org.springframework.web.bind.annotation.RequestMapping) || "
-          + "@annotation(org.springframework.web.bind.annotation.GetMapping) || "
-          + "@annotation(org.springframework.web.bind.annotation.PostMapping) || "
-          + "@annotation(org.springframework.web.bind.annotation.PutMapping) || "
-          + "@annotation(org.springframework.web.bind.annotation.DeleteMapping)")
-  public Object measureEndpointPerformance(ProceedingJoinPoint joinPoint) throws Throwable {
-    String methodName = joinPoint.getSignature().getName();
-    Timer timer =
-        Timer.builder("endpoint.performance")
+    @Around(
+        "@annotation(org.springframework.web.bind.annotation.RequestMapping) || " +
+        "@annotation(org.springframework.web.bind.annotation.GetMapping) || " +
+        "@annotation(org.springframework.web.bind.annotation.PostMapping) || " +
+        "@annotation(org.springframework.web.bind.annotation.PutMapping) || " +
+        "@annotation(org.springframework.web.bind.annotation.DeleteMapping)"
+    )
+    public Object measureEndpointPerformance(ProceedingJoinPoint joinPoint) throws Throwable {
+        String methodName = joinPoint.getSignature().getName();
+        Timer timer = Timer
+            .builder("endpoint.performance")
             .tag("method", methodName)
             .description("Performance measurement for endpoints")
             .register(meterRegistry);
 
-    long startTime = System.nanoTime();
-    try {
-      return joinPoint.proceed();
-    } finally {
-      long endTime = System.nanoTime();
-      timer.record(endTime - startTime, TimeUnit.NANOSECONDS);
+        long startTime = System.nanoTime();
+        try {
+            return joinPoint.proceed();
+        } finally {
+            long endTime = System.nanoTime();
+            timer.record(endTime - startTime, TimeUnit.NANOSECONDS);
 
-      log.info(
-          "Method {} execution time: {} ms",
-          methodName,
-          TimeUnit.NANOSECONDS.toMillis(endTime - startTime));
+            log.info("Method {} execution time: {} ms", methodName, TimeUnit.NANOSECONDS.toMillis(endTime - startTime));
+        }
     }
-  }
 }

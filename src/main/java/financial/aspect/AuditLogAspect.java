@@ -15,48 +15,51 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuditLogAspect {
 
-  private static final Logger auditLogger = LoggerFactory.getLogger("AUDIT_LOG");
+    private static final Logger auditLogger = LoggerFactory.getLogger("AUDIT_LOG");
 
-  @Around("@annotation(financial.aspect.AuditLog)")
-  public Object auditMethod(ProceedingJoinPoint joinPoint) throws Throwable {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    String user = authentication != null ? authentication.getName() : "anonymous";
+    @Around("@annotation(financial.aspect.AuditLog)")
+    public Object auditMethod(ProceedingJoinPoint joinPoint) throws Throwable {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String user = authentication != null ? authentication.getName() : "anonymous";
 
-    LocalDateTime timestamp = LocalDateTime.now();
-    String methodName = joinPoint.getSignature().getName();
-    String className = joinPoint.getTarget().getClass().getSimpleName();
+        LocalDateTime timestamp = LocalDateTime.now();
+        String methodName = joinPoint.getSignature().getName();
+        String className = joinPoint.getTarget().getClass().getSimpleName();
 
-    // Log before method execution
-    auditLogger.info(
-        "AUDIT: User {} accessed {}.{} at {} with parameters: {}",
-        user,
-        className,
-        methodName,
-        timestamp,
-        Arrays.toString(joinPoint.getArgs()));
+        // Log before method execution
+        auditLogger.info(
+            "AUDIT: User {} accessed {}.{} at {} with parameters: {}",
+            user,
+            className,
+            methodName,
+            timestamp,
+            Arrays.toString(joinPoint.getArgs())
+        );
 
-    try {
-      Object result = joinPoint.proceed();
+        try {
+            Object result = joinPoint.proceed();
 
-      // Log after successful execution
-      auditLogger.info(
-          "AUDIT: User {} successfully completed {}.{} at {}",
-          user,
-          className,
-          methodName,
-          LocalDateTime.now());
+            // Log after successful execution
+            auditLogger.info(
+                "AUDIT: User {} successfully completed {}.{} at {}",
+                user,
+                className,
+                methodName,
+                LocalDateTime.now()
+            );
 
-      return result;
-    } catch (Exception e) {
-      // Log if operation fails
-      auditLogger.error(
-          "AUDIT: User {} failed executing {}.{} at {} with error: {}",
-          user,
-          className,
-          methodName,
-          LocalDateTime.now(),
-          e.getMessage());
-      throw e;
+            return result;
+        } catch (Exception e) {
+            // Log if operation fails
+            auditLogger.error(
+                "AUDIT: User {} failed executing {}.{} at {} with error: {}",
+                user,
+                className,
+                methodName,
+                LocalDateTime.now(),
+                e.getMessage()
+            );
+            throw e;
+        }
     }
-  }
 }

@@ -9,21 +9,23 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class NotificationService {
 
-  @Async
-  public void notifyImportantTransaction(Transaction transaction) {
-    // In un'implementazione reale, qui si invierebbe una vera notifica
-    // via email, SMS, o push notification
-    log.info(
-        "NOTIFICA IMPORTANTE: Nuova transazione di {} EUR per {}",
-        transaction.getAmount(),
-        transaction.getDescription());
-  }
+    @Async
+    public void notifyImportantTransaction(Transaction transaction) {
+        // In un'implementazione reale, qui si invierebbe una vera notifica
+        // via email, SMS, o push notification
+        log.info(
+            "NOTIFICA IMPORTANTE: Nuova transazione di {} EUR per {}",
+            transaction.getAmount(),
+            transaction.getDescription()
+        );
+    }
 
-  @Async
-  public void notifyRecurringTransactionScheduled(Transaction transaction) {
-    log.info(
-        "NOTIFICA: Transazione ricorrente programmata per {} - Prossima esecuzione: {}",
-        transaction.getDescription(),
-        transaction.getNextExecutionDate());
-  }
+    @Async
+    public void notifyRecurringTransactionScheduled(Transaction transaction) {
+        log.info(
+            "NOTIFICA: Transazione ricorrente programmata per {} - Prossima esecuzione: {}",
+            transaction.getDescription(),
+            transaction.getNextExecutionDate()
+        );
+    }
 }

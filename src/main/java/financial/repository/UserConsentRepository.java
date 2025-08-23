@@ -5,8 +5,7 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserConsentRepository extends JpaRepository<UserConsent, Long> {
-  List<UserConsent> findByUserId(String userId);
+    List<UserConsent> findByUserId(String userId);
 
-  boolean existsByUserIdAndConsentTypeAndConsented(
-      String userId, String consentType, boolean consented);
+    boolean existsByUserIdAndConsentTypeAndConsented(String userId, String consentType, boolean consented);
 }
