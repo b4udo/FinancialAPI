@@ -126,7 +126,6 @@ The project includes a comprehensive GitHub Actions pipeline with three main sta
 
 ### 1. Code Quality
 - **Backend:**
-  - Java code style check with Spotless (Google Java Format)
   - Java code formatting check with Prettier
   - SonarCloud analysis for code quality and security
 - **Frontend:**
