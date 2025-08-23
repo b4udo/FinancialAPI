@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AuditLog {
-    String operation() default "";
+  String operation() default "";
 
-    boolean includeArgs() default true;
+  boolean includeArgs() default true;
 }

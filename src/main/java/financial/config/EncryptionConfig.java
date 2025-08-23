@@ -9,14 +9,14 @@ import org.springframework.security.crypto.encrypt.TextEncryptor;
 @Configuration
 public class EncryptionConfig {
 
-    @Value("${encryption.secret-key}")
-    private String secretKey;
+  @Value("${encryption.secret-key}")
+  private String secretKey;
 
-    @Value("${encryption.salt}")
-    private String salt;
+  @Value("${encryption.salt}")
+  private String salt;
 
-    @Bean
-    public TextEncryptor textEncryptor() {
-        return Encryptors.text(secretKey, salt);
-    }
+  @Bean
+  public TextEncryptor textEncryptor() {
+    return Encryptors.text(secretKey, salt);
+  }
 }

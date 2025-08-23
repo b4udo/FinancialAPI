@@ -9,18 +9,17 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ResilienceConfig {
 
-    @Bean
-    public CircuitBreakerConfig circuitBreakerConfig() {
-        return CircuitBreakerConfig
-            .custom()
-            .failureRateThreshold(50)
-            .waitDurationInOpenState(Duration.ofSeconds(60))
-            .slidingWindowSize(5)
-            .build();
-    }
+  @Bean
+  public CircuitBreakerConfig circuitBreakerConfig() {
+    return CircuitBreakerConfig.custom()
+        .failureRateThreshold(50)
+        .waitDurationInOpenState(Duration.ofSeconds(60))
+        .slidingWindowSize(5)
+        .build();
+  }
 
-    @Bean
-    public RetryConfig retryConfig() {
-        return RetryConfig.custom().maxAttempts(3).waitDuration(Duration.ofSeconds(2)).build();
-    }
+  @Bean
+  public RetryConfig retryConfig() {
+    return RetryConfig.custom().maxAttempts(3).waitDuration(Duration.ofSeconds(2)).build();
+  }
 }
