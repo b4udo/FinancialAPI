@@ -251,7 +251,15 @@
                 </configuration>
                 <executions>
                     <execution>
+                        <id>check</id>
                         <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>write</id>
+                        <phase>process-sources</phase>
                         <goals>
                             <goal>write</goal>
                         </goals>

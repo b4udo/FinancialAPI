@@ -1,0 +1,126 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  code-quality:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Backend code quality
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Check Java code style with Spotless
+      run: mvn spotless:check
+
+    - name: Check Java code style with Prettier
+      run: mvn prettier:check
+
+    - name: Run SonarCloud Analysis
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: mvn verify sonar:sonar -Pcoverage -Dsonar.projectKey=b4udo_FinancialAPI -Dsonar.organization=b4udo -Dsonar.host.url=https://sonarcloud.io
+
+    # Frontend code quality
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'src/main/frontend/package-lock.json'
+
+    - name: Install frontend dependencies
+      working-directory: src/main/frontend
+      run: npm ci
+
+    - name: Check frontend formatting
+      working-directory: src/main/frontend
+      run: npm run prettier:check
+
+    - name: Run ESLint
+      working-directory: src/main/frontend
+      run: npm run lint
+
+  test:
+    needs: code-quality
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Run backend tests
+      run: mvn test
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'src/main/frontend/package-lock.json'
+
+    - name: Run frontend tests
+      working-directory: src/main/frontend
+      run: |
+        npm ci
+        npm test -- --watchAll=false --coverage
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        cache-dependency-path: 'src/main/frontend/package-lock.json'
+
+    - name: Build frontend
+      working-directory: src/main/frontend
+      run: |
+        npm ci
+        npm run build
+
+    - name: Build backend
+      run: mvn -B package --file pom.xml -DskipTests
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: financial-api
+        path: target/*.jar
