@@ -50,7 +50,12 @@ jobs:
 
     - name: Install frontend dependencies
       working-directory: src/main/frontend
-      run: npm ci
+      run: |
+        if [ ! -f "package-lock.json" ]; then
+          npm install
+        else
+          npm ci
+        fi
 
     - name: Check frontend formatting
       working-directory: src/main/frontend
@@ -88,7 +93,11 @@ jobs:
     - name: Run frontend tests
       working-directory: src/main/frontend
       run: |
-        npm ci
+        if [ ! -f "package-lock.json" ]; then
+          npm install
+        else
+          npm ci
+        fi
         npm test -- --watchAll=false --coverage
 
   build:
@@ -116,7 +125,11 @@ jobs:
     - name: Build frontend
       working-directory: src/main/frontend
       run: |
-        npm ci
+        if [ ! -f "package-lock.json" ]; then
+          npm install
+        else
+          npm ci
+        fi
         npm run build
 
     - name: Build backend
