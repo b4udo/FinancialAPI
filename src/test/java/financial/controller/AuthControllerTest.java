@@ -52,11 +52,7 @@ public class AuthControllerTest {
     @BeforeEach
     void setUp() {
         validRequest = new AuthRequest("testuser", "password123");
-        validUser = User.builder()
-                .username("testuser")
-                .password("encoded_password")
-                .role(UserRole.ROLE_USER)
-                .build();
+        validUser = User.builder().username("testuser").password("encoded_password").role(UserRole.ROLE_USER).build();
     }
 
     @Test
@@ -66,22 +62,28 @@ public class AuthControllerTest {
         when(userRepository.save(any(User.class))).thenReturn(validUser);
         when(jwtService.generateToken(any())).thenReturn("test.jwt.token");
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(validRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("test.jwt.token"));
+        mockMvc
+            .perform(
+                post("/api/auth/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(validRequest))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token").value("test.jwt.token"));
     }
 
     @Test
     void whenRegisterWithExistingUsername_thenReturnBadRequest() throws Exception {
         when(userRepository.existsByUsername("testuser")).thenReturn(true);
 
-        mockMvc.perform(post("/api/auth/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(validRequest)))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Username already exists"));
+        mockMvc
+            .perform(
+                post("/api/auth/register")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(validRequest))
+            )
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.error").value("Username already exists"));
     }
 
     @Test
@@ -89,10 +91,13 @@ public class AuthControllerTest {
         when(userRepository.findByUsername("testuser")).thenReturn(Optional.of(validUser));
         when(jwtService.generateToken(any())).thenReturn("test.jwt.token");
 
-        mockMvc.perform(post("/api/auth/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(validRequest)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.token").value("test.jwt.token"));
+        mockMvc
+            .perform(
+                post("/api/auth/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(validRequest))
+            )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.token").value("test.jwt.token"));
     }
 }
