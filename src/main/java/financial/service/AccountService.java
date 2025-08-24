@@ -34,8 +34,6 @@ public class AccountService {
     /**
      * Aggiorna un account esistente. Lancia AccountNotFoundException se l'account con l'id dato non
      * esiste.
-     *
-     *
      */
     @Transactional
     public Account updateAccount(Long id, Account payload) {
@@ -50,11 +48,7 @@ public class AccountService {
         return accountRepository.save(existing);
     }
 
-    /**
-     * Elimina un account, lanciando AccountNotFoundException se non esiste.
-     *
-     *
-     */
+    /** Elimina un account, lanciando AccountNotFoundException se non esiste. */
     @Transactional
     public void deleteAccount(Long id) {
         if (!accountRepository.existsById(id)) {
