@@ -16,6 +16,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -101,6 +102,9 @@ public class TransactionService {
         return transactionRepository.findByIsRecurringTrueAndNextExecutionDateAfter(LocalDateTime.now());
     }
 
+    @Autowired
+    private TransactionService self;
+
     public Map<String, Object> getAnnualSummary(int year) {
         LocalDateTime startOfYear = LocalDateTime.of(year, 1, 1, 0, 0);
         LocalDateTime endOfYear = LocalDateTime.of(year, 12, 31, 23, 59, 59);
@@ -113,7 +117,7 @@ public class TransactionService {
             "totalAmount",
             yearTransactions.stream().map(Transaction::getAmount).reduce(BigDecimal.ZERO, BigDecimal::add)
         );
-        summary.put("categoryBreakdown", getCategoryStatistics(startOfYear, endOfYear));
+        summary.put("categoryBreakdown", self.getCategoryStatistics(startOfYear, endOfYear));
 
         return summary;
     }

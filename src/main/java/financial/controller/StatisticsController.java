@@ -1,9 +1,11 @@
 package financial.controller;
 
+import financial.model.Transaction;
 import financial.model.TransactionCategory;
 import financial.service.TransactionService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -34,16 +36,21 @@ public class StatisticsController {
     }
 
     @GetMapping("/transactions/search")
-    public ResponseEntity<?> searchTransactions(
+    public ResponseEntity<List<Transaction>> searchTransactions(
         @RequestParam(value = "category", required = false) TransactionCategory category,
         @RequestParam(value = "minAmount", required = false) BigDecimal minAmount,
         @RequestParam(value = "maxAmount", required = false) BigDecimal maxAmount,
         @RequestParam(value = "startDate", required = false) LocalDateTime startDate,
         @RequestParam(value = "endDate", required = false) LocalDateTime endDate
     ) {
-        return ResponseEntity.ok(
-            transactionService.searchTransactions(category, minAmount, maxAmount, startDate, endDate)
+        List<Transaction> results = transactionService.searchTransactions(
+            category,
+            minAmount,
+            maxAmount,
+            startDate,
+            endDate
         );
+        return ResponseEntity.ok(results);
     }
 
     @GetMapping("/summary/annual")
