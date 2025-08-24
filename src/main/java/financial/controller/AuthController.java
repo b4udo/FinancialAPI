@@ -10,7 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,7 +41,7 @@ public class AuthController {
 
         userRepository.save(user);
 
-        String token = jwtService.generateToken((UserDetails) user);
+        String token = jwtService.generateToken(user);
         return ResponseEntity.ok(Map.of("token", token));
     }
 
@@ -53,7 +52,7 @@ public class AuthController {
         );
 
         User user = userRepository.findByUsername(request.getUsername()).orElseThrow();
-        String token = jwtService.generateToken((UserDetails) user);
+        String token = jwtService.generateToken(user);
 
         return ResponseEntity.ok(Map.of("token", token));
     }
