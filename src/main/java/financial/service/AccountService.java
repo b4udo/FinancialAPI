@@ -1,11 +1,11 @@
 package financial.service;
 
+import financial.exception.AccountNotFoundException;
 import financial.model.Account;
 import financial.repository.AccountRepository;
 import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
-import javax.security.auth.login.AccountNotFoundException;
 import org.springframework.stereotype.Service;
 
 /** Service che incapsula la logica di business per gli Account */
@@ -35,19 +35,17 @@ public class AccountService {
      * Aggiorna un account esistente. Lancia AccountNotFoundException se l'account con l'id dato non
      * esiste.
      *
-     * @throws AccountNotFoundException
+     *
      */
     @Transactional
-    public Account updateAccount(Long id, Account payload) throws AccountNotFoundException {
+    public Account updateAccount(Long id, Account payload) {
         Account existing = accountRepository
             .findById(id)
             .orElseThrow(() -> new AccountNotFoundException("Account not found with id: " + id));
 
-        // Aggiorna solo i campi desiderati (evita di sovrascrivere id o campi gestiti dal DB)
         existing.setOwnerName(payload.getOwnerName());
         existing.setBalance(payload.getBalance());
         existing.setAccountType(payload.getAccountType());
-        // se hai altri campi da mappare, aggiungili qui
 
         return accountRepository.save(existing);
     }
@@ -55,10 +53,10 @@ public class AccountService {
     /**
      * Elimina un account, lanciando AccountNotFoundException se non esiste.
      *
-     * @throws AccountNotFoundException
+     *
      */
     @Transactional
-    public void deleteAccount(Long id) throws AccountNotFoundException {
+    public void deleteAccount(Long id) {
         if (!accountRepository.existsById(id)) {
             throw new AccountNotFoundException("Account not found with id: " + id);
         }
