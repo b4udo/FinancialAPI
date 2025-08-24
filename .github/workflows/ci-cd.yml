@@ -70,7 +70,7 @@ jobs:
       run: mvn -B package --file pom.xml -DskipTests
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: financial-api
         path: target/*.jar
