@@ -1,6 +1,6 @@
 # Financial API
 
-A modern financial services application built with Spring Boot and React, featuring secure transaction management, account handling, and real-time statistics.
+A modern RESTful financial services application built with Spring Boot, featuring secure transaction management, account handling, and real-time statistics.
 
 ## Features
 
@@ -9,28 +9,21 @@ A modern financial services application built with Spring Boot and React, featur
 - **Transaction Processing**: Secure transaction handling with validation
 - **Real-time Statistics**: Transaction and account analytics
 - **Privacy Controls**: Data protection and privacy management
-- **Modern React Frontend**: Responsive and user-friendly interface
-- **API Documentation**: OpenAPI/Swagger documentation
+- **RESTful API**: Well-documented endpoints with OpenAPI/Swagger
+- **API Documentation**: Interactive Swagger UI documentation
 - **Monitoring**: Prometheus metrics and logging
 
 ## Technology Stack
 
-### Backend
+### Core
 - Java 17
 - Spring Boot 3.1.3
-- Spring Security
+- Spring Security with JWT
 - Spring Data JPA
 - H2 Database
-- JWT Authentication
-- OpenAPI/Swagger
+- OpenAPI/Swagger 3
 - Lombok
 - JUnit & Spring Test
-
-### Frontend
-- React
-- TypeScript
-- Node.js 18
-- Modern UI Components
 
 ### DevOps & Monitoring
 - Docker & Docker Compose
@@ -43,7 +36,6 @@ A modern financial services application built with Spring Boot and React, featur
 ## Prerequisites
 
 - Java 17 or higher
-- Node.js 18 or higher
 - Maven
 - Docker (optional)
 - Git
@@ -56,27 +48,39 @@ A modern financial services application built with Spring Boot and React, featur
    cd FinancialAPI
    ```
 
-2. **Build the backend**
+2. **Build the application**
    ```bash
    mvn clean install
    ```
 
-3. **Set up the frontend**
-   ```bash
-   cd src/main/frontend
-   npm install
-   npm start
-   ```
-
-4. **Run the application**
+3. **Run the application**
    ```bash
    mvn spring-boot:run
    ```
 
-   The application will be available at:
-   - Backend: http://localhost:8080
-   - Frontend: http://localhost:3000
-   - Swagger UI: http://localhost:8080/swagger-ui.html
+   The application will be available at http://localhost:8080
+
+4. **Access the API Documentation**
+   Open Swagger UI at http://localhost:8080/swagger-ui.html
+
+5. **Authentication**
+   1. Register a new user:
+      ```bash
+      curl -X POST http://localhost:8080/api/auth/register \
+        -H "Content-Type: application/json" \
+        -d '{"username": "youruser", "password": "yourpassword"}'
+      ```
+   2. Login to get JWT token:
+      ```bash
+      curl -X POST http://localhost:8080/api/auth/login \
+        -H "Content-Type: application/json" \
+        -d '{"username": "youruser", "password": "yourpassword"}'
+      ```
+   3. Use the token in subsequent requests:
+      ```bash
+      curl -X GET http://localhost:8080/api/your-endpoint \
+        -H "Authorization: Bearer your-jwt-token"
+      ```
 
 ## Docker Support
 
@@ -108,13 +112,14 @@ docker-compose up -d
 Run the test suite:
 
 ```bash
-# Backend tests
 mvn test
-
-# Frontend tests
-cd src/main/frontend
-npm test
 ```
+
+The test suite includes:
+- Unit tests for all components
+- Integration tests for controllers
+- Security tests for JWT authentication
+- Repository tests with H2 in-memory database
 
 ## API Documentation
 
@@ -125,34 +130,19 @@ Access the API documentation through Swagger UI at `/swagger-ui.html` when runni
 The project includes a comprehensive GitHub Actions pipeline with three main stages:
 
 ### 1. Code Quality
-- **Backend:**
-  - Java code formatting check with Prettier
-  - SonarCloud analysis for code quality and security
-- **Frontend:**
-  - TypeScript/JavaScript linting with ESLint
-  - Code formatting check with Prettier
-  - Style files (CSS/SCSS) formatting verification
+- Java code formatting check with Prettier
+- SonarCloud analysis for code quality and security
+- Code coverage thresholds verification
 
 ### 2. Testing
-- **Backend:**
-  - Unit tests execution
-  - Integration tests
-  - Code coverage analysis with JaCoCo
-- **Frontend:**
-  - Component tests
-  - Integration tests
-  - Coverage reporting
+- Unit tests execution
+- Integration tests
+- Code coverage analysis with JaCoCo
 
 ### 3. Build
-- **Frontend:**
-  - Dependencies installation
-  - Production build creation
-- **Backend:**
-  - Maven package creation
-  - JAR artifact generation
-- **Artifacts:**
-  - Automated artifact upload
-  - Version tracking
+- Maven package creation
+- JAR artifact generation
+- Artifact upload for deployment
 
 The pipeline runs automatically on:
 - Push to main branch
@@ -170,8 +160,14 @@ Quality Gates:
 ```
 ├── src/
 │   ├── main/
-│   │   ├── frontend/         # React frontend application
-│   │   ├── java/             # Java backend code
+│   │   ├── java/             # Application code
+│   │   │   └── financial/
+│   │   │       ├── config/   # Configuration classes
+│   │   │       ├── controller/ # REST controllers
+│   │   │       ├── model/    # Domain models
+│   │   │       ├── repository/ # Data repositories
+│   │   │       ├── security/ # Security configuration
+│   │   │       └── service/  # Business logic
 │   │   └── resources/        # Application configuration
 │   └── test/                 # Test files
 ├── docker-compose.yml        # Docker composition
@@ -194,15 +190,9 @@ Quality Gates:
    ```
 4. Ensure code quality:
    ```bash
-   # Backend
    mvn spotless:apply  # Format Java code
    mvn prettier:write  # Format with Prettier
-   mvn verify         # Run all checks
-
-   # Frontend
-   npm run prettier:write  # Format code
-   npm run lint           # Check code quality
-   npm test              # Run tests
+   mvn verify         # Run all checks including tests
    ```
 5. Commit your changes (the CI pipeline will verify your changes)
 6. Push to your branch

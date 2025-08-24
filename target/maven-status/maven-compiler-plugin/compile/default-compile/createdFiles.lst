@@ -28,6 +28,7 @@ financial\aspect\AuditLog.class
 financial\controller\PrivacyController.class
 financial\model\User.class
 financial\security\JwtAuthenticationFilter.class
+financial\exception\AccountNotFoundException.class
 financial\model\TransactionCategory.class
 financial\repository\UserConsentRepository.class
 financial\controller\TransactionController.class
@@ -37,5 +38,6 @@ financial\repository\TransactionRepository.class
 financial\model\Transaction.class
 financial\util\DataMaskingUtil.class
 financial\config\MetricsConfig.class
+financial\exception\GlobalExceptionHandler.class
 financial\config\EncryptionConfig.class
 financial\service\PrivacyService.class

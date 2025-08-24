@@ -6,6 +6,7 @@ import financial.service.AccountService;
 import financial.service.TransactionService;
 import java.net.URI;
 import java.util.List;
+import javax.security.auth.login.AccountNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,10 +59,23 @@ public class FinancialController {
         return ResponseEntity.created(URI.create("/api/accounts/" + created.getId())).body(created);
     }
 
+    // Aggiorna un conto (PUT /api/accounts/{id})
+    @PutMapping(
+        value = "/accounts/{id}",
+        consumes = MediaType.APPLICATION_JSON_VALUE,
+        produces = MediaType.APPLICATION_JSON_VALUE
+    )
+    public ResponseEntity<Account> updateAccount(@PathVariable Long id, @RequestBody Account payload)
+        throws AccountNotFoundException {
+        // Il service lancia AccountNotFoundException se non trova l'account
+        Account updated = accountService.updateAccount(id, payload);
+        return ResponseEntity.ok(updated);
+    }
+
     // Elimina un conto
     @DeleteMapping("/accounts/{id}")
-    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
-        accountService.deleteAccount(id);
+    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) throws AccountNotFoundException {
+        accountService.deleteAccount(id); // lancia AccountNotFoundException se non esiste
         return ResponseEntity.noContent().build();
     }
 }

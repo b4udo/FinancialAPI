@@ -13,9 +13,11 @@ C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\config\Metr
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\OpenAPIConfig.java
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\controller\TransactionController.java
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\model\UserRole.java
+C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\exception\GlobalExceptionHandler.java
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\controller\StatisticsController.java
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\service\NotificationService.java
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\aspect\AuditLog.java
+C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\exception\AccountNotFoundException.java
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\config\EncryptionConfig.java
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\service\AccountService.java
 C:\Users\dodob\IdeaProjects\APIMicroservices\src\main\java\financial\model\Transaction.java

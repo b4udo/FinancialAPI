@@ -27,7 +27,7 @@ class JwtServiceTest {
         String token = jwtService.generateToken(userDetails);
 
         assertNotNull(token);
-        assertTrue(token.length() > 0);
+        assertFalse(token.isEmpty());
         assertTrue(jwtService.isTokenValid(token, userDetails));
     }
 
